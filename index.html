@@ -1203,6 +1203,27 @@
 </div>
 
 <script>
+// ── Supabase config ──
+const SUPABASE_URL = 'https://bepzxyrpjoaqqhsmwoxn.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlcHp4eXJwam9hcXFoc213b3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NTYxNDAsImV4cCI6MjA5ODIzMjE0MH0.D9jtEcuiNbLyg60txi5WfkJkfcOGZaokilRhP3gWIUs';
+
+async function sbReq(path, options = {}) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+      ...(options.headers || {})
+    }
+  });
+  if (r.status === 204) return null;
+  const body = await r.json();
+  if (!r.ok) throw new Error(body.message || `HTTP ${r.status}`);
+  return body;
+}
+
 // ── Device detection — runs first so CSS adapts before paint ──
 function detectDevice() {
   const ua = navigator.userAgent;
@@ -1295,16 +1316,6 @@ function openEdit(idx, label, currentVal) {
 
 document.getElementById('editCancel').addEventListener('click', () => editModal.classList.remove('show'));
 
-document.getElementById('editSave').addEventListener('click', () => {
-  const val = editInput.value.trim();
-  const suffixes = ['天', '', ''];
-  if (editTarget !== null && val !== '') {
-    const display = val + suffixes[editTarget];
-    document.getElementById(`kpi${editTarget}-val`).textContent =
-      display.length > 10 ? display.substring(0, 10) + '…' : display;
-  }
-  editModal.classList.remove('show');
-});
 
 editInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('editSave').click();
@@ -1388,133 +1399,65 @@ document.addEventListener('click', e => {
   showToast(el.dataset.action);
 });
 
-// ╔══════════════════════════════════════════════════════════╗
-// ║ MOCK BACKEND — localStorage API                          ║
-// ║ Designed with the same shape as a real REST API so the   ║
-// ║ frontend can swap to fetch() against a real server later ║
-// ║ without changes to call sites.                           ║
-// ╚══════════════════════════════════════════════════════════╝
-const DB_KEY = 'portfoplus_v1';
-
-const DEFAULT_STATE = {
-  profile: {
-    name: 'Frank Cheng',
-    email: 'cylbill@gmail.com',
-    avatar: 'F',
-    proTier: true,
-    locale: 'zh-TW'
-  },
-  kpis: {
-    deadline: '2天',
-    quarterGoal: '-',
-    weeklyMeet: '0'
-  },
-  customers: [
-    { id: 1, name: '陳大文', phone: '9123 4567', email: 'taiman@example.com', note: '保單檢視', createdAt: Date.now() - 86400000 * 14 },
-    { id: 2, name: '李美玲',  phone: '9876 5432', email: '',                  note: '危疾保障跟進', createdAt: Date.now() - 86400000 * 7 },
-    { id: 3, name: 'Joanna Wong', phone: '6543 2109', email: 'joanna@example.com', note: '儲蓄計劃 - 待約', createdAt: Date.now() - 86400000 * 2 }
-  ],
-  bigdata: {
-    agents: 1284,
-    avgPolicies: 18,
-    deals: 472,
-    newClients: 935,
-    weeklyDeals: [42, 51, 38, 67, 59, 73, 81]
-  },
-  performance: {
-    completed: 23,
-    pending: 7,
-    commission: 'HK$ 48,200',
-    targetRate: '68%',
-    monthlyDeals: [12, 15, 19, 14, 22, 23]
-  }
-};
+// ── Supabase API (replaces localStorage mock) ──
+const DEFAULT_PROFILE = { name: 'Frank Cheng', email: 'cylbill@gmail.com', avatar: 'F', proTier: true, locale: 'zh-HK' };
+const DEFAULT_KPIS    = { deadline: '2天', quarterGoal: '-', weeklyMeet: '0' };
+const BIGDATA         = { agents: 1284, avgPolicies: 18, deals: 472, newClients: 935, weeklyDeals: [42, 51, 38, 67, 59, 73, 81] };
+const PERFORMANCE     = { completed: 23, pending: 7, commission: 'HK$ 48,200', targetRate: '68%', monthlyDeals: [12, 15, 19, 14, 22, 23] };
 
 const api = {
-  _load() {
+  async getProfile() {
     try {
-      const raw = localStorage.getItem(DB_KEY);
-      if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
-      const data = JSON.parse(raw);
-      // Merge with defaults so new fields don't break older saved state
-      return Object.assign({}, JSON.parse(JSON.stringify(DEFAULT_STATE)), data);
-    } catch (e) {
-      console.warn('DB load failed, using defaults', e);
-      return JSON.parse(JSON.stringify(DEFAULT_STATE));
-    }
+      const rows = await sbReq('profile?id=eq.1&select=*');
+      if (rows && rows.length > 0) {
+        const row = rows[0];
+        return { name: row.name, email: row.email, avatar: (row.name || 'F').charAt(0).toUpperCase(), proTier: true, locale: row.locale || 'zh-HK' };
+      }
+    } catch(e) { console.warn('getProfile:', e); }
+    return { ...DEFAULT_PROFILE };
   },
-  _save(state) {
-    try { localStorage.setItem(DB_KEY, JSON.stringify(state)); }
-    catch (e) { console.warn('DB save failed', e); }
+  async getKPIs() {
+    try {
+      const rows = await sbReq('kpis?id=eq.1&select=*');
+      if (rows && rows.length > 0) {
+        const row = rows[0];
+        return { deadline: row.deadline || '2天', quarterGoal: row.quarter_goal || '-', weeklyMeet: row.weekly_meet != null ? String(row.weekly_meet) : '0' };
+      }
+    } catch(e) { console.warn('getKPIs:', e); }
+    return { ...DEFAULT_KPIS };
   },
-  // GET endpoints
-  getProfile()       { return this._load().profile; },
-  getKPIs()          { return this._load().kpis; },
-  getCustomers()     { return this._load().customers.slice().sort((a,b) => b.createdAt - a.createdAt); },
-  getBigData()       { return this._load().bigdata; },
-  getPerformance()   { return this._load().performance; },
-  // POST/PUT endpoints
-  updateProfile(updates) {
-    const s = this._load();
-    s.profile = { ...s.profile, ...updates };
-    s.profile.avatar = (s.profile.name || '?').trim().charAt(0).toUpperCase();
-    this._save(s);
-    return s.profile;
+  async getCustomers() {
+    try {
+      const rows = await sbReq('customers?select=*&order=created_at.desc');
+      return (rows || []).map(r => ({ id: r.id, name: r.name, phone: r.phone || '', email: r.email || '', note: r.note || '', createdAt: new Date(r.created_at).getTime() }));
+    } catch(e) { console.warn('getCustomers:', e); return []; }
   },
-  updateKPI(field, value) {
-    const s = this._load();
-    s.kpis[field] = value;
-    this._save(s);
-    return s.kpis;
+  async updateProfile(updates) {
+    const name = (updates.name || '').trim(), email = (updates.email || '').trim();
+    await sbReq('profile?id=eq.1', { method: 'PATCH', body: JSON.stringify({ name, email, updated_at: new Date().toISOString() }) });
+    return { name, email, avatar: (name || 'F').charAt(0).toUpperCase() };
   },
-  createCustomer(data) {
-    const s = this._load();
-    const id = (s.customers.reduce((m,c) => Math.max(m, c.id), 0) || 0) + 1;
-    const customer = { id, createdAt: Date.now(), ...data };
-    s.customers.push(customer);
-    this._save(s);
-    return customer;
+  async updateKPI(field, value) {
+    const map = { deadline: 'deadline', quarterGoal: 'quarter_goal', weeklyMeet: 'weekly_meet' };
+    const col = map[field]; if (!col) return;
+    const v = field === 'weeklyMeet' ? (parseInt(value) || 0) : value;
+    await sbReq('kpis?id=eq.1', { method: 'PATCH', body: JSON.stringify({ [col]: v, updated_at: new Date().toISOString() }) });
   },
-  updateCustomer(id, data) {
-    const s = this._load();
-    const idx = s.customers.findIndex(c => c.id === id);
-    if (idx < 0) return null;
-    s.customers[idx] = { ...s.customers[idx], ...data };
-    this._save(s);
-    return s.customers[idx];
+  async createCustomer(data) {
+    const rows = await sbReq('customers', { method: 'POST', body: JSON.stringify({ name: data.name, phone: data.phone || '', email: data.email || '', note: data.note || '' }) });
+    return rows && rows[0] ? rows[0] : null;
   },
-  deleteCustomer(id) {
-    const s = this._load();
-    s.customers = s.customers.filter(c => c.id !== id);
-    this._save(s);
-    return true;
+  async updateCustomer(id, data) {
+    await sbReq(`customers?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ name: data.name, phone: data.phone || '', email: data.email || '', note: data.note || '', updated_at: new Date().toISOString() }) });
   },
-  reset() {
-    localStorage.removeItem(DB_KEY);
-    return DEFAULT_STATE;
-  }
+  async deleteCustomer(id) {
+    await sbReq(`customers?id=eq.${id}`, { method: 'DELETE', headers: { 'Prefer': '' } });
+  },
+  getBigData()     { return BIGDATA; },
+  getPerformance() { return PERFORMANCE; }
 };
 
-// ── Hydrate UI from DB on load ──
-function hydrate() {
-  const profile = api.getProfile();
-  const kpis = api.getKPIs();
-
-  document.querySelector('.welcome .name').textContent = profile.name;
-  document.getElementById('kpi0-val').firstChild
-    ? document.getElementById('kpi0-val').firstChild.textContent = kpis.deadline
-    : null;
-  // Safer: rebuild the value spans
-  setKpiDisplay(0, kpis.deadline);
-  setKpiDisplay(1, kpis.quarterGoal);
-  setKpiDisplay(2, kpis.weeklyMeet);
-
-  // Account page
-  document.getElementById('acctName').textContent = profile.name;
-  document.getElementById('acctEmail').textContent = profile.email;
-  document.getElementById('acctAvatar').textContent = profile.avatar;
-}
-
+// ── UI helpers ──
 function setKpiDisplay(idx, val) {
   const el = document.getElementById(`kpi${idx}-val`);
   if (!el) return;
@@ -1522,38 +1465,51 @@ function setKpiDisplay(idx, val) {
   el.textContent = display.length > 10 ? display.substring(0, 10) + '…' : display;
 }
 
-// Override the KPI save handler to persist via api
+// ── Hydrate UI from Supabase ──
+async function hydrate() {
+  try {
+    const [profile, kpis] = await Promise.all([api.getProfile(), api.getKPIs()]);
+    document.querySelector('.welcome .name').textContent = profile.name;
+    setKpiDisplay(0, kpis.deadline);
+    setKpiDisplay(1, kpis.quarterGoal);
+    setKpiDisplay(2, kpis.weeklyMeet);
+    document.getElementById('acctName').textContent  = profile.name;
+    document.getElementById('acctEmail').textContent = profile.email;
+    document.getElementById('acctAvatar').textContent = profile.avatar;
+  } catch(e) { console.error('Hydrate error:', e); }
+}
+
+// ── KPI save (single async handler, capture phase) ──
 const KPI_FIELDS = ['deadline', 'quarterGoal', 'weeklyMeet'];
 const KPI_SUFFIX = ['天', '', ''];
-document.getElementById('editSave').addEventListener('click', () => {
+document.getElementById('editSave').addEventListener('click', async () => {
   const val = editInput.value.trim();
   if (editTarget === null || val === '') { editModal.classList.remove('show'); return; }
   const display = val + (KPI_SUFFIX[editTarget] || '');
-  api.updateKPI(KPI_FIELDS[editTarget], display);
   setKpiDisplay(editTarget, display);
-}, true); // capture phase, runs before earlier listener
+  editModal.classList.remove('show');
+  try { await api.updateKPI(KPI_FIELDS[editTarget], display); }
+  catch(e) { showToast('儲存失敗'); console.error(e); }
+}, true);
 
 // ── Page router ──
 function navigateTo(pageName) {
   document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.dataset.page === pageName));
   document.getElementById('headerTitle').textContent = pageName;
   document.getElementById('headerPro').style.display = pageName === '主頁' ? '' : 'none';
-  // Refresh page-specific content
-  if (pageName === '客戶') renderCustomers();
+  if (pageName === '客戶')  renderCustomers().catch(console.error);
   if (pageName === '大數據') renderBigData();
-  if (pageName === '業績') renderPerformance();
-  if (pageName === '帳戶') hydrate();
+  if (pageName === '業績')  renderPerformance();
+  if (pageName === '帳戶')  hydrate().catch(console.error);
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-// Hook bottom-nav clicks to actually navigate
+// ── Bottom nav ──
 document.querySelectorAll('.nav-item[data-nav]').forEach(item => {
-  // Remove the previous toast-only handler by cloning the node
   const cloned = item.cloneNode(true);
   item.parentNode.replaceChild(cloned, item);
   cloned.addEventListener('click', () => {
     const target = cloned.dataset.nav;
-    // Move the elevated home button to the active tab
     document.querySelectorAll('.nav-item').forEach(n => {
       const homeWrap = n.querySelector('.nav-home-wrap');
       if (homeWrap) {
@@ -1584,20 +1540,17 @@ document.querySelectorAll('.nav-item[data-nav]').forEach(item => {
   });
 });
 
-// ── Customer page logic ──
+// ── Customer page ──
 let editingCustomerId = null;
 const customerModal = document.getElementById('customerModal');
 
-function renderCustomers() {
+async function renderCustomers() {
   const list = document.getElementById('customerList');
   const empty = document.getElementById('customerEmpty');
-  const customers = api.getCustomers();
+  list.innerHTML = '<div style="text-align:center;padding:30px;color:#aaa;font-size:13px">載入中…</div>';
+  const customers = await api.getCustomers();
   document.getElementById('customerCount').textContent = `(${customers.length})`;
-  if (customers.length === 0) {
-    list.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
+  if (customers.length === 0) { list.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   list.innerHTML = customers.map(c => `
     <div class="customer-row" data-cust-id="${c.id}">
@@ -1631,80 +1584,83 @@ function openCustomerModal(customer = null) {
 
 document.getElementById('addCustomerFab').addEventListener('click', () => openCustomerModal());
 
-document.getElementById('customerList').addEventListener('click', e => {
+document.getElementById('customerList').addEventListener('click', async e => {
   const editBtn = e.target.closest('[data-cust-edit]');
   const delBtn  = e.target.closest('[data-cust-del]');
   const row     = e.target.closest('.customer-row');
   if (editBtn) {
     e.stopPropagation();
-    const id = +editBtn.dataset.custEdit;
-    const cust = api.getCustomers().find(c => c.id === id);
+    const id = editBtn.dataset.custEdit;
+    const customers = await api.getCustomers();
+    const cust = customers.find(c => c.id === id);
     if (cust) openCustomerModal(cust);
   } else if (delBtn) {
     e.stopPropagation();
-    const id = +delBtn.dataset.custDel;
-    const cust = api.getCustomers().find(c => c.id === id);
+    const id = delBtn.dataset.custDel;
+    const customers = await api.getCustomers();
+    const cust = customers.find(c => c.id === id);
     if (cust && confirm(`確定刪除 ${cust.name}?`)) {
-      api.deleteCustomer(id);
-      renderCustomers();
-      showToast(`已刪除 ${cust.name}`);
+      try { await api.deleteCustomer(id); await renderCustomers(); showToast(`已刪除 ${cust.name}`); }
+      catch(e) { showToast('刪除失敗'); console.error(e); }
     }
   } else if (row) {
-    const id = +row.dataset.custId;
-    const cust = api.getCustomers().find(c => c.id === id);
+    const id = row.dataset.custId;
+    const customers = await api.getCustomers();
+    const cust = customers.find(c => c.id === id);
     if (cust) openCustomerModal(cust);
   }
 });
 
 document.getElementById('custCancel').addEventListener('click', () => customerModal.classList.remove('show'));
-document.getElementById('custSave').addEventListener('click', () => {
+document.getElementById('custSave').addEventListener('click', async () => {
   const name  = document.getElementById('custName').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const email = document.getElementById('custEmail').value.trim();
   const note  = document.getElementById('custNote').value.trim();
   if (!name) { showToast('請輸入姓名'); return; }
-  if (editingCustomerId) {
-    api.updateCustomer(editingCustomerId, { name, phone, email, note });
-    showToast('已更新');
-  } else {
-    api.createCustomer({ name, phone, email, note });
-    showToast('已新增客戶');
-  }
   customerModal.classList.remove('show');
-  renderCustomers();
+  try {
+    if (editingCustomerId) { await api.updateCustomer(editingCustomerId, { name, phone, email, note }); showToast('已更新'); }
+    else                   { await api.createCustomer({ name, phone, email, note }); showToast('已新增客戶'); }
+    await renderCustomers();
+  } catch(e) { showToast('儲存失敗'); console.error(e); }
 });
 customerModal.addEventListener('click', e => { if (e.target === customerModal) customerModal.classList.remove('show'); });
 
-// ── Account page logic ──
+// ── Account page ──
 const profileModal = document.getElementById('profileModal');
-document.getElementById('acctEditProfile').addEventListener('click', () => {
-  const p = api.getProfile();
-  document.getElementById('profName').value  = p.name;
-  document.getElementById('profEmail').value = p.email;
+document.getElementById('acctEditProfile').addEventListener('click', async () => {
+  const profile = await api.getProfile();
+  document.getElementById('profName').value  = profile.name;
+  document.getElementById('profEmail').value = profile.email;
   profileModal.classList.add('show');
   setTimeout(() => document.getElementById('profName').focus(), 50);
 });
 document.getElementById('profCancel').addEventListener('click', () => profileModal.classList.remove('show'));
-document.getElementById('profSave').addEventListener('click', () => {
+document.getElementById('profSave').addEventListener('click', async () => {
   const name  = document.getElementById('profName').value.trim();
   const email = document.getElementById('profEmail').value.trim();
   if (!name) { showToast('姓名不能為空'); return; }
-  api.updateProfile({ name, email });
-  hydrate();
   profileModal.classList.remove('show');
-  showToast('已儲存');
+  try { await api.updateProfile({ name, email }); await hydrate(); showToast('已儲存'); }
+  catch(e) { showToast('儲存失敗'); console.error(e); }
 });
 profileModal.addEventListener('click', e => { if (e.target === profileModal) profileModal.classList.remove('show'); });
 
-document.getElementById('acctClearData').addEventListener('click', () => {
-  if (confirm('確定清除所有本機資料? (將恢復為預設值)')) {
-    api.reset();
-    hydrate();
-    showToast('已重設');
+document.getElementById('acctClearData').addEventListener('click', async () => {
+  if (confirm('確定重設帳戶資料至預設值?')) {
+    try {
+      await Promise.all([
+        sbReq('profile?id=eq.1', { method: 'PATCH', body: JSON.stringify({ name: 'Frank Cheng', email: 'cylbill@gmail.com', updated_at: new Date().toISOString() }) }),
+        sbReq('kpis?id=eq.1',    { method: 'PATCH', body: JSON.stringify({ deadline: '2天', quarter_goal: '-', weekly_meet: 0, updated_at: new Date().toISOString() }) })
+      ]);
+      await hydrate();
+      showToast('已重設');
+    } catch(e) { showToast('重設失敗'); }
   }
 });
 
-// ── Big-data + Performance page rendering ──
+// ── Big-data + Performance ──
 function renderBars(containerId, values, labels) {
   const max = Math.max(...values, 1);
   document.getElementById(containerId).innerHTML = values.map((v, i) =>
@@ -1730,7 +1686,7 @@ function renderPerformance() {
   renderBars('perf-chart', p.monthlyDeals, ['1月','2月','3月','4月','5月','6月']);
 }
 
-// ── Initial hydration ──
+// ── Initial load ──
 hydrate();
 </script>
 </body>
