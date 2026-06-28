@@ -461,6 +461,170 @@
   .btn-cancel  { font-size: 14px; color: var(--text-muted); cursor: pointer; padding: 8px 4px; min-height: 36px; display: flex; align-items: center; }
   .btn-save    { font-size: 14px; color: var(--primary); font-weight: 700; cursor: pointer; padding: 8px 4px; min-height: 36px; display: flex; align-items: center; }
 
+  /* ── PAGES (SPA router) ── */
+  .page { display: none; }
+  .page.active { display: block; animation: fadein 0.18s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .page-title {
+    padding: 14px 16px 6px;
+    font-size: 18px; font-weight: 700;
+    color: var(--text);
+  }
+  .page-sub {
+    padding: 0 16px 12px;
+    font-size: 12px; color: var(--text-muted);
+  }
+
+  /* Empty state */
+  .empty {
+    text-align: center; color: var(--text-muted);
+    font-size: 13px;
+    padding: 50px 30px;
+  }
+  .empty-icon { color: #d0d6dd; margin-bottom: 12px; }
+  .empty-icon .icon { width: 56px; height: 56px; stroke-width: 1.2; }
+
+  /* Customer list */
+  .customer-list { padding: 0 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .customer-row {
+    background: var(--card); border-radius: 12px;
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    cursor: pointer; min-height: 56px;
+  }
+  .customer-row:active { transform: scale(0.99); }
+  .customer-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, #42a5f5, #1565C0);
+    color: #fff; font-weight: 700; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .customer-info { flex: 1; min-width: 0; }
+  .customer-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .customer-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .customer-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .icon-action {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    color: #888; cursor: pointer; border-radius: 6px;
+  }
+  .icon-action:active { background: rgba(0,0,0,0.05); }
+  .icon-action .icon { width: 18px; height: 18px; }
+  .icon-action.danger { color: var(--danger); }
+
+  /* Floating action button */
+  .fab {
+    position: fixed; bottom: calc(90px + var(--sab)); right: 16px;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 18px rgba(21,101,192,0.5);
+    cursor: pointer; z-index: 150;
+  }
+  .fab:active { transform: scale(0.95); }
+  .fab .icon { width: 26px; height: 26px; stroke-width: 2.5; }
+
+  /* Form */
+  .form-stack { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .form-field { display: flex; flex-direction: column; gap: 6px; }
+  .form-label { font-size: 12px; color: var(--text-light); font-weight: 600; }
+  .form-input, .form-select {
+    width: 100%; border: 1.5px solid #ddd; border-radius: 10px;
+    padding: 11px 14px; font-size: 15px;
+    outline: none; color: var(--text); background: #fff;
+    -webkit-appearance: none;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(21,101,192,0.12); }
+  .btn-primary {
+    width: 100%; background: var(--primary); color: #fff;
+    border: none; border-radius: 10px;
+    padding: 13px; font-size: 15px; font-weight: 700;
+    cursor: pointer; min-height: 44px;
+  }
+  .btn-primary:active { transform: scale(0.99); }
+  .btn-ghost {
+    width: 100%; background: transparent; color: var(--text-muted);
+    border: 1.5px solid #ddd; border-radius: 10px;
+    padding: 13px; font-size: 14px; font-weight: 600;
+    cursor: pointer; min-height: 44px;
+  }
+  .btn-danger {
+    width: 100%; background: transparent; color: var(--danger);
+    border: 1.5px solid var(--danger); border-radius: 10px;
+    padding: 13px; font-size: 14px; font-weight: 600;
+    cursor: pointer; min-height: 44px;
+  }
+
+  /* Stat tile (perf/bigdata pages) */
+  .stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    padding: 0 12px 14px;
+  }
+  .stat-tile {
+    background: var(--card); border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  }
+  .stat-tile-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .stat-tile-val { font-size: 22px; font-weight: 800; color: var(--text); }
+  .stat-tile-trend { font-size: 11px; margin-top: 4px; }
+  .trend-up { color: #2e7d32; }
+  .trend-down { color: var(--danger); }
+
+  /* Simple bar chart */
+  .mini-chart {
+    background: var(--card); border-radius: 14px;
+    margin: 0 12px 14px;
+    padding: 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  }
+  .chart-title { font-size: 13px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
+  .chart-bars { display: flex; gap: 8px; align-items: flex-end; height: 110px; }
+  .chart-bar {
+    flex: 1; background: linear-gradient(180deg, #42a5f5, #1565C0);
+    border-radius: 4px 4px 0 0;
+    position: relative; min-height: 4px;
+    transition: height 0.4s ease;
+  }
+  .chart-bar::after {
+    content: attr(data-label);
+    position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: var(--text-muted);
+  }
+  .chart-labels-row { margin-top: 24px; }
+
+  /* Account page */
+  .account-header {
+    padding: 24px 16px 16px;
+    text-align: center;
+  }
+  .account-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, #42a5f5, #1565C0);
+    color: #fff; font-weight: 700; font-size: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 14px rgba(21,101,192,0.3);
+  }
+  .account-name { font-size: 17px; font-weight: 700; color: var(--text); }
+  .account-email { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .account-section {
+    background: var(--card); margin: 8px 12px; border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05); overflow: hidden;
+  }
+  .account-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px; cursor: pointer; min-height: 50px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .account-row:last-child { border-bottom: none; }
+  .account-row-label { font-size: 14px; color: var(--text); }
+  .account-row-value { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+  .account-row-value .icon { width: 16px; height: 16px; }
+
   /* ── TOAST ── */
   .toast {
     position: fixed; bottom: calc(96px + var(--sab)); left: 50%;
@@ -636,13 +800,16 @@
       <div class="icon-btn" data-action="開啟選單"><svg class="icon"><use href="#i-menu"/></svg></div>
       <div class="gift-icon" data-action="開啟獎賞"><svg class="icon" style="width:20px;height:20px;stroke:#fff;stroke-width:2"><use href="#i-gift"/></svg></div>
     </div>
-    <div class="header-title">主頁 <span class="pro-badge">PRO</span></div>
+    <div class="header-title"><span id="headerTitle">主頁</span> <span class="pro-badge" id="headerPro">PRO</span></div>
     <div class="header-right">
       <div class="icon-btn" data-action="開啟通知 (1)"><svg class="icon"><use href="#i-bell"/></svg><div class="notif-badge">1</div></div>
       <div class="icon-btn" data-action="開啟協助"><svg class="icon"><use href="#i-help"/></svg></div>
       <div class="icon-btn" data-action="開啟待辦"><svg class="icon"><use href="#i-check"/></svg></div>
     </div>
   </div>
+
+  <!-- ── PAGE: HOME ── -->
+  <div class="page active" data-page="主頁">
 
   <!-- ── BANNER CAROUSEL ── -->
   <div class="banner-wrap">
@@ -825,6 +992,122 @@
     </div>
   </div>
 
+  </div><!-- /.page[主頁] -->
+
+  <!-- ── PAGE: 大數據 ── -->
+  <div class="page" data-page="大數據">
+    <div class="page-title">大數據</div>
+    <div class="page-sub">業界活動 · 統計趨勢</div>
+    <div class="stat-grid">
+      <div class="stat-tile">
+        <div class="stat-tile-label">本月活躍代理</div>
+        <div class="stat-tile-val" id="bd-agents">—</div>
+        <div class="stat-tile-trend trend-up">↑ 12% vs 上月</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-label">平均保單</div>
+        <div class="stat-tile-val" id="bd-policies">—</div>
+        <div class="stat-tile-trend trend-up">↑ 4.8% vs 上月</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-label">本季成交</div>
+        <div class="stat-tile-val" id="bd-deals">—</div>
+        <div class="stat-tile-trend trend-down">↓ 2% vs 上季</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-label">新客戶</div>
+        <div class="stat-tile-val" id="bd-clients">—</div>
+        <div class="stat-tile-trend trend-up">↑ 18% vs 上月</div>
+      </div>
+    </div>
+    <div class="mini-chart">
+      <div class="chart-title">過去 7 天市場成交</div>
+      <div class="chart-bars" id="bd-chart"></div>
+      <div class="chart-labels-row"></div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: 業績 ── -->
+  <div class="page" data-page="業績">
+    <div class="page-title">我的業績</div>
+    <div class="page-sub">當季表現概覽</div>
+    <div class="stat-grid">
+      <div class="stat-tile">
+        <div class="stat-tile-label">已完成保單</div>
+        <div class="stat-tile-val" id="perf-completed">—</div>
+        <div class="stat-tile-trend trend-up">↑ 3 本週</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-label">處理中</div>
+        <div class="stat-tile-val" id="perf-pending">—</div>
+        <div class="stat-tile-trend">待跟進</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-label">本月佣金</div>
+        <div class="stat-tile-val" id="perf-commission">—</div>
+        <div class="stat-tile-trend trend-up">↑ 8%</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-label">目標達成率</div>
+        <div class="stat-tile-val" id="perf-target">—</div>
+        <div class="stat-tile-trend">本季</div>
+      </div>
+    </div>
+    <div class="mini-chart">
+      <div class="chart-title">過去 6 個月成交</div>
+      <div class="chart-bars" id="perf-chart"></div>
+      <div class="chart-labels-row"></div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: 客戶 ── -->
+  <div class="page" data-page="客戶">
+    <div class="page-title">客戶 <span id="customerCount" style="color:var(--text-muted);font-weight:500;font-size:13px"></span></div>
+    <div class="page-sub">點按客戶以編輯，右下角加入新客戶</div>
+    <div class="customer-list" id="customerList"></div>
+    <div class="empty" id="customerEmpty" style="display:none">
+      <div class="empty-icon"><svg class="icon"><use href="#i-users"/></svg></div>
+      尚未有客戶<br>點按右下方 + 來加入第一位客戶
+    </div>
+    <div class="fab" id="addCustomerFab" title="新增客戶"><svg class="icon"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg></div>
+  </div>
+
+  <!-- ── PAGE: 帳戶 ── -->
+  <div class="page" data-page="帳戶">
+    <div class="account-header">
+      <div class="account-avatar" id="acctAvatar">F</div>
+      <div class="account-name" id="acctName">Frank Cheng</div>
+      <div class="account-email" id="acctEmail">cylbill@gmail.com</div>
+    </div>
+    <div class="account-section">
+      <div class="account-row" id="acctEditProfile">
+        <span class="account-row-label">編輯個人資料</span>
+        <span class="account-row-value"><svg class="icon"><use href="#i-chev-right"/></svg></span>
+      </div>
+      <div class="account-row" data-action="切換語言">
+        <span class="account-row-label">語言</span>
+        <span class="account-row-value">繁體中文 <svg class="icon"><use href="#i-chev-right"/></svg></span>
+      </div>
+      <div class="account-row" data-action="訂閱管理">
+        <span class="account-row-label">訂閱方案</span>
+        <span class="account-row-value">PRO (試用) <svg class="icon"><use href="#i-chev-right"/></svg></span>
+      </div>
+    </div>
+    <div class="account-section">
+      <div class="account-row" data-action="關於 PortfoPlus">
+        <span class="account-row-label">關於</span>
+        <span class="account-row-value">v1.0.0 <svg class="icon"><use href="#i-chev-right"/></svg></span>
+      </div>
+      <div class="account-row" data-action="說明與支援">
+        <span class="account-row-label">說明與支援</span>
+        <span class="account-row-value"><svg class="icon"><use href="#i-chev-right"/></svg></span>
+      </div>
+    </div>
+    <div class="form-stack" style="padding-top:8px">
+      <button class="btn-danger" id="acctClearData">清除所有本機資料</button>
+    </div>
+  </div>
+
   <!-- ── BOTTOM NAV ── -->
   <div class="bottom-nav">
     <div class="nav-item" data-nav="大數據">
@@ -865,6 +1148,56 @@
     <div class="modal-actions">
       <span class="btn-cancel" id="editCancel">取消</span>
       <span class="btn-save" id="editSave">儲存</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── CUSTOMER FORM MODAL ── -->
+<div class="modal-overlay" id="customerModal">
+  <div class="modal-box">
+    <div class="modal-title" id="custModalTitle">新增客戶</div>
+    <div class="form-stack" style="padding:0">
+      <div class="form-field">
+        <label class="form-label">姓名 *</label>
+        <input class="form-input" id="custName" type="text" autocomplete="off" placeholder="例: 陳大文">
+      </div>
+      <div class="form-field">
+        <label class="form-label">電話</label>
+        <input class="form-input" id="custPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="9123 4567">
+      </div>
+      <div class="form-field">
+        <label class="form-label">電郵</label>
+        <input class="form-input" id="custEmail" type="email" inputmode="email" autocomplete="off" placeholder="name@example.com">
+      </div>
+      <div class="form-field">
+        <label class="form-label">備註</label>
+        <input class="form-input" id="custNote" type="text" autocomplete="off" placeholder="保單興趣 / 跟進事項">
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:16px">
+      <span class="btn-cancel" id="custCancel">取消</span>
+      <span class="btn-save" id="custSave">儲存</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROFILE EDIT MODAL ── -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-box">
+    <div class="modal-title">編輯個人資料</div>
+    <div class="form-stack" style="padding:0">
+      <div class="form-field">
+        <label class="form-label">姓名</label>
+        <input class="form-input" id="profName" type="text" autocomplete="off">
+      </div>
+      <div class="form-field">
+        <label class="form-label">電郵</label>
+        <input class="form-input" id="profEmail" type="email" inputmode="email" autocomplete="off">
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:16px">
+      <span class="btn-cancel" id="profCancel">取消</span>
+      <span class="btn-save" id="profSave">儲存</span>
     </div>
   </div>
 </div>
@@ -1054,6 +1387,351 @@ document.addEventListener('click', e => {
   if (!el) return;
   showToast(el.dataset.action);
 });
+
+// ╔══════════════════════════════════════════════════════════╗
+// ║ MOCK BACKEND — localStorage API                          ║
+// ║ Designed with the same shape as a real REST API so the   ║
+// ║ frontend can swap to fetch() against a real server later ║
+// ║ without changes to call sites.                           ║
+// ╚══════════════════════════════════════════════════════════╝
+const DB_KEY = 'portfoplus_v1';
+
+const DEFAULT_STATE = {
+  profile: {
+    name: 'Frank Cheng',
+    email: 'cylbill@gmail.com',
+    avatar: 'F',
+    proTier: true,
+    locale: 'zh-TW'
+  },
+  kpis: {
+    deadline: '2天',
+    quarterGoal: '-',
+    weeklyMeet: '0'
+  },
+  customers: [
+    { id: 1, name: '陳大文', phone: '9123 4567', email: 'taiman@example.com', note: '保單檢視', createdAt: Date.now() - 86400000 * 14 },
+    { id: 2, name: '李美玲',  phone: '9876 5432', email: '',                  note: '危疾保障跟進', createdAt: Date.now() - 86400000 * 7 },
+    { id: 3, name: 'Joanna Wong', phone: '6543 2109', email: 'joanna@example.com', note: '儲蓄計劃 - 待約', createdAt: Date.now() - 86400000 * 2 }
+  ],
+  bigdata: {
+    agents: 1284,
+    avgPolicies: 18,
+    deals: 472,
+    newClients: 935,
+    weeklyDeals: [42, 51, 38, 67, 59, 73, 81]
+  },
+  performance: {
+    completed: 23,
+    pending: 7,
+    commission: 'HK$ 48,200',
+    targetRate: '68%',
+    monthlyDeals: [12, 15, 19, 14, 22, 23]
+  }
+};
+
+const api = {
+  _load() {
+    try {
+      const raw = localStorage.getItem(DB_KEY);
+      if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
+      const data = JSON.parse(raw);
+      // Merge with defaults so new fields don't break older saved state
+      return Object.assign({}, JSON.parse(JSON.stringify(DEFAULT_STATE)), data);
+    } catch (e) {
+      console.warn('DB load failed, using defaults', e);
+      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    }
+  },
+  _save(state) {
+    try { localStorage.setItem(DB_KEY, JSON.stringify(state)); }
+    catch (e) { console.warn('DB save failed', e); }
+  },
+  // GET endpoints
+  getProfile()       { return this._load().profile; },
+  getKPIs()          { return this._load().kpis; },
+  getCustomers()     { return this._load().customers.slice().sort((a,b) => b.createdAt - a.createdAt); },
+  getBigData()       { return this._load().bigdata; },
+  getPerformance()   { return this._load().performance; },
+  // POST/PUT endpoints
+  updateProfile(updates) {
+    const s = this._load();
+    s.profile = { ...s.profile, ...updates };
+    s.profile.avatar = (s.profile.name || '?').trim().charAt(0).toUpperCase();
+    this._save(s);
+    return s.profile;
+  },
+  updateKPI(field, value) {
+    const s = this._load();
+    s.kpis[field] = value;
+    this._save(s);
+    return s.kpis;
+  },
+  createCustomer(data) {
+    const s = this._load();
+    const id = (s.customers.reduce((m,c) => Math.max(m, c.id), 0) || 0) + 1;
+    const customer = { id, createdAt: Date.now(), ...data };
+    s.customers.push(customer);
+    this._save(s);
+    return customer;
+  },
+  updateCustomer(id, data) {
+    const s = this._load();
+    const idx = s.customers.findIndex(c => c.id === id);
+    if (idx < 0) return null;
+    s.customers[idx] = { ...s.customers[idx], ...data };
+    this._save(s);
+    return s.customers[idx];
+  },
+  deleteCustomer(id) {
+    const s = this._load();
+    s.customers = s.customers.filter(c => c.id !== id);
+    this._save(s);
+    return true;
+  },
+  reset() {
+    localStorage.removeItem(DB_KEY);
+    return DEFAULT_STATE;
+  }
+};
+
+// ── Hydrate UI from DB on load ──
+function hydrate() {
+  const profile = api.getProfile();
+  const kpis = api.getKPIs();
+
+  document.querySelector('.welcome .name').textContent = profile.name;
+  document.getElementById('kpi0-val').firstChild
+    ? document.getElementById('kpi0-val').firstChild.textContent = kpis.deadline
+    : null;
+  // Safer: rebuild the value spans
+  setKpiDisplay(0, kpis.deadline);
+  setKpiDisplay(1, kpis.quarterGoal);
+  setKpiDisplay(2, kpis.weeklyMeet);
+
+  // Account page
+  document.getElementById('acctName').textContent = profile.name;
+  document.getElementById('acctEmail').textContent = profile.email;
+  document.getElementById('acctAvatar').textContent = profile.avatar;
+}
+
+function setKpiDisplay(idx, val) {
+  const el = document.getElementById(`kpi${idx}-val`);
+  if (!el) return;
+  const display = String(val);
+  el.textContent = display.length > 10 ? display.substring(0, 10) + '…' : display;
+}
+
+// Override the KPI save handler to persist via api
+const KPI_FIELDS = ['deadline', 'quarterGoal', 'weeklyMeet'];
+const KPI_SUFFIX = ['天', '', ''];
+document.getElementById('editSave').addEventListener('click', () => {
+  const val = editInput.value.trim();
+  if (editTarget === null || val === '') { editModal.classList.remove('show'); return; }
+  const display = val + (KPI_SUFFIX[editTarget] || '');
+  api.updateKPI(KPI_FIELDS[editTarget], display);
+  setKpiDisplay(editTarget, display);
+}, true); // capture phase, runs before earlier listener
+
+// ── Page router ──
+function navigateTo(pageName) {
+  document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.dataset.page === pageName));
+  document.getElementById('headerTitle').textContent = pageName;
+  document.getElementById('headerPro').style.display = pageName === '主頁' ? '' : 'none';
+  // Refresh page-specific content
+  if (pageName === '客戶') renderCustomers();
+  if (pageName === '大數據') renderBigData();
+  if (pageName === '業績') renderPerformance();
+  if (pageName === '帳戶') hydrate();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+// Hook bottom-nav clicks to actually navigate
+document.querySelectorAll('.nav-item[data-nav]').forEach(item => {
+  // Remove the previous toast-only handler by cloning the node
+  const cloned = item.cloneNode(true);
+  item.parentNode.replaceChild(cloned, item);
+  cloned.addEventListener('click', () => {
+    const target = cloned.dataset.nav;
+    // Move the elevated home button to the active tab
+    document.querySelectorAll('.nav-item').forEach(n => {
+      const homeWrap = n.querySelector('.nav-home-wrap');
+      if (homeWrap) {
+        const label = homeWrap.querySelector('.nav-label').textContent;
+        const iconMap = { '大數據': '#i-chart', '業績': '#i-chart', '主頁': '#i-home', '客戶': '#i-users', '帳戶': '#i-settings' };
+        const hot = n.querySelector('.nav-hot');
+        n.innerHTML = '';
+        if (hot) n.appendChild(hot);
+        const iconDiv = document.createElement('div');
+        iconDiv.className = 'nav-icon';
+        iconDiv.innerHTML = `<svg class="icon"><use href="${iconMap[n.dataset.nav]}"/></svg>`;
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'nav-label';
+        labelDiv.textContent = label;
+        n.appendChild(iconDiv);
+        n.appendChild(labelDiv);
+      }
+    });
+    const iconMap = { '大數據': '#i-chart', '業績': '#i-chart', '主頁': '#i-home', '客戶': '#i-users', '帳戶': '#i-settings' };
+    const hotBadge = cloned.querySelector('.nav-hot');
+    cloned.innerHTML = '';
+    if (hotBadge) cloned.appendChild(hotBadge);
+    const wrap = document.createElement('div');
+    wrap.className = 'nav-home-wrap';
+    wrap.innerHTML = `<div class="nav-home-btn"><svg class="icon"><use href="${iconMap[target]}"/></svg></div><div class="nav-label act">${target}</div>`;
+    cloned.appendChild(wrap);
+    navigateTo(target);
+  });
+});
+
+// ── Customer page logic ──
+let editingCustomerId = null;
+const customerModal = document.getElementById('customerModal');
+
+function renderCustomers() {
+  const list = document.getElementById('customerList');
+  const empty = document.getElementById('customerEmpty');
+  const customers = api.getCustomers();
+  document.getElementById('customerCount').textContent = `(${customers.length})`;
+  if (customers.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  list.innerHTML = customers.map(c => `
+    <div class="customer-row" data-cust-id="${c.id}">
+      <div class="customer-avatar">${escapeHtml(c.name.charAt(0).toUpperCase())}</div>
+      <div class="customer-info">
+        <div class="customer-name">${escapeHtml(c.name)}</div>
+        <div class="customer-meta">${escapeHtml(c.phone || '無電話')}${c.note ? ' · ' + escapeHtml(c.note) : ''}</div>
+      </div>
+      <div class="customer-actions">
+        <div class="icon-action" data-cust-edit="${c.id}" title="編輯"><svg class="icon"><use href="#i-pencil"/></svg></div>
+        <div class="icon-action danger" data-cust-del="${c.id}" title="刪除"><svg class="icon"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M6 6v14a2 2 0 002 2h8a2 2 0 002-2V6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
+
+function openCustomerModal(customer = null) {
+  editingCustomerId = customer ? customer.id : null;
+  document.getElementById('custModalTitle').textContent = customer ? '編輯客戶' : '新增客戶';
+  document.getElementById('custName').value  = customer?.name  || '';
+  document.getElementById('custPhone').value = customer?.phone || '';
+  document.getElementById('custEmail').value = customer?.email || '';
+  document.getElementById('custNote').value  = customer?.note  || '';
+  customerModal.classList.add('show');
+  setTimeout(() => document.getElementById('custName').focus(), 50);
+}
+
+document.getElementById('addCustomerFab').addEventListener('click', () => openCustomerModal());
+
+document.getElementById('customerList').addEventListener('click', e => {
+  const editBtn = e.target.closest('[data-cust-edit]');
+  const delBtn  = e.target.closest('[data-cust-del]');
+  const row     = e.target.closest('.customer-row');
+  if (editBtn) {
+    e.stopPropagation();
+    const id = +editBtn.dataset.custEdit;
+    const cust = api.getCustomers().find(c => c.id === id);
+    if (cust) openCustomerModal(cust);
+  } else if (delBtn) {
+    e.stopPropagation();
+    const id = +delBtn.dataset.custDel;
+    const cust = api.getCustomers().find(c => c.id === id);
+    if (cust && confirm(`確定刪除 ${cust.name}?`)) {
+      api.deleteCustomer(id);
+      renderCustomers();
+      showToast(`已刪除 ${cust.name}`);
+    }
+  } else if (row) {
+    const id = +row.dataset.custId;
+    const cust = api.getCustomers().find(c => c.id === id);
+    if (cust) openCustomerModal(cust);
+  }
+});
+
+document.getElementById('custCancel').addEventListener('click', () => customerModal.classList.remove('show'));
+document.getElementById('custSave').addEventListener('click', () => {
+  const name  = document.getElementById('custName').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  const email = document.getElementById('custEmail').value.trim();
+  const note  = document.getElementById('custNote').value.trim();
+  if (!name) { showToast('請輸入姓名'); return; }
+  if (editingCustomerId) {
+    api.updateCustomer(editingCustomerId, { name, phone, email, note });
+    showToast('已更新');
+  } else {
+    api.createCustomer({ name, phone, email, note });
+    showToast('已新增客戶');
+  }
+  customerModal.classList.remove('show');
+  renderCustomers();
+});
+customerModal.addEventListener('click', e => { if (e.target === customerModal) customerModal.classList.remove('show'); });
+
+// ── Account page logic ──
+const profileModal = document.getElementById('profileModal');
+document.getElementById('acctEditProfile').addEventListener('click', () => {
+  const p = api.getProfile();
+  document.getElementById('profName').value  = p.name;
+  document.getElementById('profEmail').value = p.email;
+  profileModal.classList.add('show');
+  setTimeout(() => document.getElementById('profName').focus(), 50);
+});
+document.getElementById('profCancel').addEventListener('click', () => profileModal.classList.remove('show'));
+document.getElementById('profSave').addEventListener('click', () => {
+  const name  = document.getElementById('profName').value.trim();
+  const email = document.getElementById('profEmail').value.trim();
+  if (!name) { showToast('姓名不能為空'); return; }
+  api.updateProfile({ name, email });
+  hydrate();
+  profileModal.classList.remove('show');
+  showToast('已儲存');
+});
+profileModal.addEventListener('click', e => { if (e.target === profileModal) profileModal.classList.remove('show'); });
+
+document.getElementById('acctClearData').addEventListener('click', () => {
+  if (confirm('確定清除所有本機資料? (將恢復為預設值)')) {
+    api.reset();
+    hydrate();
+    showToast('已重設');
+  }
+});
+
+// ── Big-data + Performance page rendering ──
+function renderBars(containerId, values, labels) {
+  const max = Math.max(...values, 1);
+  document.getElementById(containerId).innerHTML = values.map((v, i) =>
+    `<div class="chart-bar" data-label="${labels[i]}" style="height:${Math.max(8, (v / max) * 100)}%"></div>`
+  ).join('');
+}
+
+function renderBigData() {
+  const d = api.getBigData();
+  document.getElementById('bd-agents').textContent   = d.agents.toLocaleString();
+  document.getElementById('bd-policies').textContent = d.avgPolicies;
+  document.getElementById('bd-deals').textContent    = d.deals;
+  document.getElementById('bd-clients').textContent  = d.newClients;
+  renderBars('bd-chart', d.weeklyDeals, ['Mo','Tu','We','Th','Fr','Sa','Su']);
+}
+
+function renderPerformance() {
+  const p = api.getPerformance();
+  document.getElementById('perf-completed').textContent  = p.completed;
+  document.getElementById('perf-pending').textContent    = p.pending;
+  document.getElementById('perf-commission').textContent = p.commission;
+  document.getElementById('perf-target').textContent     = p.targetRate;
+  renderBars('perf-chart', p.monthlyDeals, ['1月','2月','3月','4月','5月','6月']);
+}
+
+// ── Initial hydration ──
+hydrate();
 </script>
 </body>
 </html>
