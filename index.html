@@ -391,6 +391,12 @@
   .support-btn:active { transform: scale(0.97); }
   .support-btn .icon { width: 20px; height: 20px; stroke-width: 2; }
 
+  /* Eliminate 300ms tap delay on all interactive elements */
+  .grid-item, .tool-card, .course-strip, .qa, .icon-btn, .gift-icon,
+  .nav-item, .support-btn, .banner-cta, .customer-row, .icon-action,
+  .fab, .account-row, .kpi-pencil, .btn-primary, .btn-ghost, .btn-danger,
+  .btn-save, .btn-cancel, [data-action] { touch-action: manipulation; }
+
   /* ── BOTTOM NAV ── */
   .bottom-nav {
     position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
@@ -1309,7 +1315,8 @@ const editTitle = document.getElementById('editTitle');
 function openEdit(idx, label, currentVal) {
   editTarget = idx;
   editTitle.textContent = '編輯 ' + label;
-  editInput.value = String(currentVal).replace(/[天]/g, '').trim();
+  const live = document.getElementById(`kpi${idx}-val`)?.textContent || '';
+  editInput.value = live.replace(/[天…]/g, '').trim() || String(currentVal).replace(/[天]/g, '').trim();
   editModal.classList.add('show');
   setTimeout(() => editInput.focus(), 50);
 }
@@ -1396,7 +1403,17 @@ document.querySelectorAll('.nav-item[data-nav]').forEach(item => {
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-action]');
   if (!el) return;
-  showToast(el.dataset.action);
+  const action = el.dataset.action;
+  if (action === '新增客戶') {
+    document.querySelector('[data-nav="客戶"]')?.click();
+    setTimeout(() => openCustomerModal(), 350);
+  } else if (action === '開啟 PROFILE+') {
+    document.querySelector('[data-nav="帳戶"]')?.click();
+  } else if (action === '開啟 業績報告') {
+    document.querySelector('[data-nav="業績"]')?.click();
+  } else {
+    showToast(action);
+  }
 });
 
 // ── Supabase API (replaces localStorage mock) ──
